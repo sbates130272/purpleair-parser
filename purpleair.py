@@ -11,6 +11,7 @@
 import json
 import requests
 import argparse
+from datetime import datetime
 
 def webget(addr):
 
@@ -35,44 +36,42 @@ def savedata(data, file):
     with open(file, 'w') as outfile:
         json.dump(data, outfile)
 
+def get_entry(jdata, idx):
+
+    if "A_H" in jdata['results'][idx]:
+        return (0, 0, 0, 0, 0, 0, 0)
+    
+    try:
+        dA = json.loads(jdata['results'][idx]["Stats"])
+        if int(jdata['results'][idx]["ID"]) % 2:
+            return (0, 0, 0, 0, 0, 0, 0)
+        if int(jdata['results'][idx]["ID"])+1 != int(jdata['results'][idx+1]["ID"]):
+            return (0, 0, 0, 0, 0, 0, 0)
+        dB = json.loads(jdata['results'][idx+1]["Stats"])
+        if (float(dA['v1'])/float(dB['v1'])>0.25) and (float(dA['v1'])/float(dB['v1'])<4):
+            return (jdata['results'][idx]["LastSeen"],
+                    jdata['results'][idx]["ID"],
+                    jdata['results'][idx]["Lat"],
+                    jdata['results'][idx]["Lon"],
+                    dA['v1'],
+                    jdata['results'][idx+1]["ID"],
+                    dB['v1'])
+        else:
+            return (0, 0, 0, 0, 0, 0, 0)
+    except:
+        return (0, 0, 0, 0, 0, 0, 0)
+
 def parse_purple(jdata):
 
-#    print json.dumps(jdata, indent=4, sort_keys=True)
+    unsorted_data = []
+    for i in xrange(1, len(jdata['results'])):
+        val = get_entry(jdata, i)
+        unsorted_data.append(val)
 
-    print jdata['results'][0]
-    print jdata['results'][0]["Lat"]
-    print jdata['results'][0]["Lon"]
-    d = json.loads(jdata['results'][0]["Stats"])
-    print d['v']
+    sorted_data = sorted(unsorted_data, key= lambda tup: tup[4])
 
-    # {
-    # "baseVersion": "6", 
-    # "mapVersion": "0.95", 
-    # "mapVersionString": "", 
-    # "results": [
-    #     {
-    #         "AGE": 0, 
-    #         "DEVICE_LOCATIONTYPE": "outside", 
-    #         "Hidden": "false", 
-    #         "ID": 16791, 
-    #         "Label": " DW0435", 
-    #         "LastSeen": 1572398501, 
-    #         "Lat": 18.082454, 
-    #         "Lon": -67.039027, 
-    #         "PM2_5Value": "4.11", 
-    #         "Stats": "{\"v\":4.11,\"v1\":3.41,\"v2\":3.36,\"v3\":3.39,\"v4\":3.22,\"v5\":2.64,\"v6\":3.24,\"pm\":4.11,\"lastModified\":1572398501693,\"timeSinceModified\":119561}", 
-    #         "THINGSPEAK_PRIMARY_ID": "589048", 
-    #         "THINGSPEAK_PRIMARY_ID_READ_KEY": "61GKVZGTCZSBUGB5", 
-    #         "THINGSPEAK_SECONDARY_ID": "589049", 
-    #         "THINGSPEAK_SECONDARY_ID_READ_KEY": "5HBLH5R8GPLM6J88", 
-    #         "Type": "PMS5003+PMS5003+BME280", 
-    #         "humidity": "65", 
-    #         "isOwner": 0, 
-    #         "pressure": "1007.79", 
-    #         "temp_f": "87"
-    #     }, 
-
-
+    for i in xrange(-20, 0):
+        print sorted_data[i]
 
 if __name__ == "__main__":
 
