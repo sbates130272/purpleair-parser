@@ -11,7 +11,7 @@
 import json
 import requests
 import argparse
-from datetime import datetime
+import datetime
 
 def webget(addr):
 
@@ -70,6 +70,10 @@ def parse_purple(jdata):
 
     sorted_data = sorted(unsorted_data, key= lambda tup: tup[4])
 
+    print
+    print
+    print datetime.date.today()
+    print
     for i in xrange(-20, 0):
         print sorted_data[i]
 
