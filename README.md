@@ -23,3 +23,10 @@ There are a few other options to the Python script. Type
 > ./purpleair.py -h
 
 for those.
+
+cron
+----
+
+There is a simple script you can sudo cp into /etc/cron.d on Debian
+and Ubuntu based systems to automatically update the database once a
+day.

@@ -1,0 +1,4 @@
+# purpleair-cron
+#
+# Pull the purpleair stats and push them to the data file once a day.
+0 19 * * * batesste cd /home/batesste/purpleair-parser && ./purpleair.py --webget 1>> data/data.csv 2>/dev/null
