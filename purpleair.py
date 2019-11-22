@@ -72,7 +72,7 @@ def parse_purple(jdata):
 
     print
     print
-    print datetime.date.today()
+    print datetime.date.today().strftime("%a %b %d %H:%M:%S %Y")
     print
     for i in xrange(-20, 0):
         print sorted_data[i]
