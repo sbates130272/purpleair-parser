@@ -13,6 +13,9 @@ import requests
 import argparse
 import datetime
 
+CANMORE_ID=37561
+canmore=(0, 0, 0, 0, 0, 0, 0)
+
 def webget(addr):
 
     response = requests.get(addr)
@@ -23,8 +26,6 @@ def webget(addr):
     return response.json()
 
 def fileget(file):
-
-    print "Hello"
 
     with open(file) as json_file:
         data = json.load(json_file)
@@ -37,12 +38,22 @@ def savedata(data, file):
         json.dump(data, outfile)
 
 def get_entry(jdata, idx):
+    global canmore
 
     if "A_H" in jdata['results'][idx]:
         return (0, 0, 0, 0, 0, 0, 0)
     
     try:
         dA = json.loads(jdata['results'][idx]["Stats"])
+        if int(jdata['results'][idx]["ID"])==CANMORE_ID:
+            dB = json.loads(jdata['results'][idx+1]["Stats"])
+            canmore = (jdata['results'][idx]["LastSeen"],
+                       jdata['results'][idx]["ID"],
+                       jdata['results'][idx]["Lat"],
+                       jdata['results'][idx]["Lon"],
+                       dA['v1'],
+                       jdata['results'][idx+1]["ID"],
+                       dB['v1'])
         if int(jdata['results'][idx]["ID"]) % 2:
             return (0, 0, 0, 0, 0, 0, 0)
         if int(jdata['results'][idx]["ID"])+1 != int(jdata['results'][idx+1]["ID"]):
@@ -76,6 +87,8 @@ def parse_purple(jdata):
     print
     for i in xrange(-20, 0):
         print sorted_data[i]
+    print
+    print canmore
 
 if __name__ == "__main__":
 
