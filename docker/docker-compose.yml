@@ -1,0 +1,21 @@
+version: "3"
+services:
+
+  grafana:
+    image: grafana/grafana:6.6.2-ubuntu
+    ports:
+      - "3000:3000"
+    volumes:
+      # mount grafana server config
+      - ./grafana/config.ini:/etc/grafana/config.ini
+    depends_on:
+      - graphite
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/config.ini
+
+  graphite:
+    image: influxdb:1.7.10
+    ports:
+      - "8086:8086"
+    volumes:
+       - ./influxdb:/var/lib/influxdb
